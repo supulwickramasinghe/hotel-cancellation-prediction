@@ -842,16 +842,3 @@ Business Action
 ```
 
 ---
-
-# 👨‍💻 Author
-
-**Supul Wickramasinghe**
-
-BSc (Hons) Data Science
-University of Colombo
-
-**LinkedIn:**
-https://www.linkedin.com/in/supul-wickramasinghe
-
-**GitHub:**
-https://github.com/supulwickramasinghe
