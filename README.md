@@ -59,7 +59,7 @@ Cancellation Risk Prediction
 
 ---
 
-# 🎯 Business Problem
+# Business Problem
 
 Booking cancellations are a major challenge in the hospitality industry.
 
@@ -90,45 +90,45 @@ Accurate cancellation predictions can support proactive business decisions such 
 
 ---
 
-# ✨ Key Features
+# Key Features
 
-✅ Exploratory Data Analysis
+ Exploratory Data Analysis
 
-✅ Data Cleaning & Validation
+ Data Cleaning & Validation
 
-✅ Feature Engineering
+ Feature Engineering
 
-✅ Customer Booking Behaviour Analysis
+ Customer Booking Behaviour Analysis
 
-✅ Reservation Pattern Analysis
+ Reservation Pattern Analysis
 
-✅ Customer Segmentation
+ Customer Segmentation
 
-✅ Classification Modeling
+ Classification Modeling
 
-✅ Logistic Regression
+ Logistic Regression
 
-✅ Support Vector Machine
+ Support Vector Machine
 
-✅ Random Forest
+ Random Forest
 
-✅ XGBoost
+ XGBoost
 
-✅ Class Imbalance Handling
+ Class Imbalance Handling
 
-✅ Model Comparison
+ Model Comparison
 
-✅ Confusion Matrix Analysis
+ Confusion Matrix Analysis
 
-✅ Precision / Recall / F1 Evaluation
+ Precision / Recall / F1 Evaluation
 
-✅ Cancellation Risk Prediction
+ Cancellation Risk Prediction
 
-✅ Business-Oriented Model Evaluation
+ Business-Oriented Model Evaluation
 
 ---
 
-# 🏗 Solution Architecture
+# Solution Architecture
 
 ```text
                  Hotel Reservations Dataset
@@ -182,7 +182,7 @@ Accurate cancellation predictions can support proactive business decisions such 
 
 ---
 
-# 📊 Dataset
+# Dataset
 
 The project uses the:
 
@@ -231,7 +231,7 @@ Not Canceled
 
 ---
 
-# 🔎 Exploratory Data Analysis
+# Exploratory Data Analysis
 
 The EDA stage investigates both customer behaviour and booking characteristics associated with hotel cancellations.
 
@@ -259,7 +259,7 @@ Understanding these patterns is important because different reservation characte
 
 ---
 
-# 🧹 Data Preprocessing
+# Data Preprocessing
 
 Before model training, reservation data is prepared for machine learning.
 
@@ -285,7 +285,7 @@ The resulting dataset becomes suitable for supervised classification algorithms.
 
 ---
 
-# 🧠 Customer Segmentation
+# Customer Segmentation
 
 One of the more advanced components of Guest Shield is the analysis of heterogeneous booking behaviour.
 
@@ -303,7 +303,7 @@ This allows predictive models to better capture differences between customer gro
 
 ---
 
-# ⚖️ Class Imbalance
+# Class Imbalance
 
 Hotel cancellation datasets may contain unequal numbers of cancelled and non-cancelled reservations.
 
@@ -325,7 +325,7 @@ From a hotel business perspective, **Recall can be particularly important** beca
 
 ---
 
-# 🤖 Machine Learning Models
+# Machine Learning Models
 
 Multiple classification models are explored and compared.
 
@@ -347,7 +347,7 @@ Logistic Regression is useful because the resulting probability can be interpret
 
 ---
 
-# 🧮 Support Vector Machine
+# Support Vector Machine
 
 Support Vector Machines are evaluated as an alternative classification approach.
 
@@ -370,7 +370,7 @@ SVM models can capture more complex decision boundaries than standard linear mod
 
 ---
 
-# 🌲 Random Forest
+# Random Forest
 
 Random Forest is used to capture nonlinear relationships and interactions within customer booking behaviour.
 
@@ -394,7 +394,7 @@ notebooks/RandomForest and XGboost.ipynb
 
 ---
 
-# 🚀 XGBoost
+# XGBoost
 
 XGBoost is evaluated as a gradient boosting approach for hotel cancellation classification.
 
@@ -410,7 +410,7 @@ notebooks/RandomForest and XGboost.ipynb
 
 ---
 
-# 📏 Model Evaluation
+# Model Evaluation
 
 The machine learning models are evaluated using classification metrics and confusion matrices.
 
@@ -434,7 +434,7 @@ For hotel operations, False Negatives can be particularly costly because they re
 
 ---
 
-# 📈 Model Comparison
+# Model Comparison
 
 The project compares several families of classification algorithms:
 
@@ -461,7 +461,7 @@ depending on the hotel's business objective.
 
 ---
 
-# 💼 Business Interpretation
+# Business Interpretation
 
 A predictive cancellation model becomes most valuable when predictions lead to business actions.
 
@@ -488,7 +488,7 @@ This transforms a machine learning prediction into an operational decision-suppo
 
 ---
 
-# 🏨 Example Business Use Cases
+# Example Business Use Cases
 
 ## High-Risk Booking Identification
 
@@ -531,7 +531,7 @@ Customer booking behaviour can be used to identify segments that require differe
 
 ---
 
-# 🔄 End-to-End Workflow
+# End-to-End Workflow
 
 ```text
 Hotel Reservation Dataset
@@ -620,9 +620,9 @@ hotel-cancellation-prediction/
 
 ---
 
-# 📁 Project Files
+# Project Files
 
-## 📊 Exploratory Data Analysis
+## Exploratory Data Analysis
 
 ```text
 notebooks/EDA.ipynb
@@ -632,7 +632,7 @@ Contains exploratory analysis and visualization of hotel reservation behaviour.
 
 ---
 
-## 📈 Logistic Regression
+## Logistic Regression
 
 ```text
 notebooks/Binary_Logistic.ipynb
@@ -644,7 +644,7 @@ Contains Logistic Regression experiments for hotel cancellation classification.
 
 ---
 
-## 🧮 Support Vector Machine
+## Support Vector Machine
 
 ```text
 notebooks/SupportVector_0.ipynb
@@ -655,7 +655,7 @@ Contains SVM-based hotel cancellation classification experiments.
 
 ---
 
-## 🌲 Random Forest & XGBoost
+## Random Forest & XGBoost
 
 ```text
 notebooks/RandomForest and XGboost.ipynb
@@ -665,7 +665,7 @@ Contains ensemble and boosted tree models used to predict reservation cancellati
 
 ---
 
-## 📄 Project Report
+## Project Report
 
 ```text
 Guest Shield_Report.pdf
@@ -675,7 +675,7 @@ Contains the detailed project methodology, analysis, modeling results, and busin
 
 ---
 
-# 📊 Prediction Concept
+# Prediction Concept
 
 For a new reservation, the system can use booking characteristics such as:
 
@@ -711,7 +711,7 @@ Hotel Intervention
 
 ---
 
-# 💡 Why Cancellation Prediction Matters
+# Why Cancellation Prediction Matters
 
 Traditional hotel systems record cancellations only **after they happen**.
 
@@ -739,7 +739,7 @@ This allows hotels to act before revenue is lost.
 
 ---
 
-# 🚀 Future Improvements
+# Future Improvements
 
 Potential improvements include:
 
