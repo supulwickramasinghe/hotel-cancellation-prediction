@@ -1,0 +1,35 @@
+
+# Python virtual environments
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Trained machine learning artifacts
+models/*.joblib
+models/*.pkl
+
+# AWS SAM generated files
+.aws-sam/
+
+# Local AWS deployment configuration
+samconfig.toml
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

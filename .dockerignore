@@ -1,0 +1,14 @@
+
+.git
+.venv
+.aws-sam
+__pycache__
+*.pyc
+notebooks
+data
+tests
+scripts
+Guest Shield_Report.pdf
+README.md
+requirements-training.txt
+.env

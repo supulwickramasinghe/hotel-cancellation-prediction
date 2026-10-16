@@ -1,0 +1,74 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: Guest Shield hotel cancellation prediction API with IAM authorization
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+
+Resources:
+
+  GuestShieldApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: prod
+
+      DefinitionBody:
+        openapi: '3.0.1'
+
+        info:
+          title: Guest Shield API
+          version: '1.0.0'
+
+        paths:
+          /predict:
+            post:
+              security:
+                - awsIamAuth: []
+              responses:
+                '200':
+                  description: Successful prediction
+
+        components:
+          securitySchemes:
+            awsIamAuth:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: awsSigv4
+
+  GuestShieldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+
+      Architectures:
+        - x86_64
+
+      Events:
+        Predict:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GuestShieldApi
+            Path: /predict
+            Method: POST
+
+    Metadata:
+      DockerTag: python3.13-v1
+      DockerContext: .
+      Dockerfile: Dockerfile
+
+Outputs:
+
+  GuestShieldApiUrl:
+    Description: Guest Shield prediction endpoint
+    Value: !Sub
+      - "https://${ApiId}.execute-api.${AWS::Region}.amazonaws.com/prod/predict"
+      - ApiId: !Ref GuestShieldApi
+
+  GuestShieldFunctionName:
+    Description: Guest Shield Lambda function name
+    Value: !Ref GuestShieldFunction

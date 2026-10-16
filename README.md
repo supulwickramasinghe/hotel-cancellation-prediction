@@ -2,19 +2,13 @@
 
 <p align="center">
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge\&logo=python\&logoColor=white)
-
-![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?style=for-the-badge\&logo=pandas)
-
-![Scikit-learn](https://img.shields.io/badge/Scikit--learn-Machine%20Learning-F7931E?style=for-the-badge\&logo=scikitlearn\&logoColor=white)
-
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-Machine%20Learning-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)
 ![Random Forest](https://img.shields.io/badge/Random%20Forest-Classification-green?style=for-the-badge)
-
-![XGBoost](https://img.shields.io/badge/XGBoost-Classification-EC6B23?style=for-the-badge)
-
-![SVM](https://img.shields.io/badge/SVM-Classification-blueviolet?style=for-the-badge)
-
-![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Cancellation%20Prediction-orange?style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![AWS Lambda](https://img.shields.io/badge/AWS%20Lambda-Serverless-FF9900?style=for-the-badge&logo=awslambda&logoColor=white)
+![API Gateway](https://img.shields.io/badge/API%20Gateway-HTTP%20API-FF4F8B?style=for-the-badge&logo=amazonapigateway&logoColor=white)
+![AWS SAM](https://img.shields.io/badge/AWS%20SAM-Infrastructure%20as%20Code-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
 
 </p>
 
@@ -22,577 +16,176 @@
 
 ## 📌 Project Overview
 
-**Guest Shield** is a machine learning–based hotel booking cancellation prediction system designed to identify reservations that are likely to be cancelled before the guest's arrival.
+**Guest Shield** is an end-to-end machine learning system for predicting hotel booking cancellations **before the guest's arrival**. It began as a comparative predictive analytics research project and has since been extended into a **containerized, serverless prediction API deployed on AWS**.
 
-Hotel cancellations create significant operational and financial challenges. They affect occupancy planning, room allocation, pricing decisions, staffing, and revenue forecasting.
+The research investigates booking behavior, customer segmentation, class imbalance, and alternative classification algorithms. The deployed inference system uses **KMeans clustering and cluster-specific Random Forest classifiers** to estimate cancellation risk for a new reservation.
 
-This project applies **exploratory data analysis, feature preprocessing, customer segmentation, class imbalance handling, classification modeling, and model evaluation** to historical hotel reservation data.
+The original research, experiments, and detailed findings are retained in [`Guest Shield_Report.pdf`](Guest%20Shield_Report.pdf) and the [`notebooks/`](notebooks/) directory.
 
-Multiple machine learning approaches are explored, including:
-
-* Logistic Regression
-* Support Vector Machines
-* Random Forest
-* XGBoost
-
-The project demonstrates an end-to-end predictive analytics workflow:
-
-```text
-Hotel Reservation Data
-        ↓
-Data Cleaning
-        ↓
-Exploratory Data Analysis
-        ↓
-Feature Engineering
-        ↓
-Customer Segmentation
-        ↓
-Class Imbalance Handling
-        ↓
-Machine Learning
-        ↓
-Model Evaluation
-        ↓
-Cancellation Risk Prediction
-```
+**Current status:** Deployed and tested on **AWS Lambda + Amazon API Gateway**, with **AWS IAM (SigV4) authorization**. The prediction endpoint is intentionally **not public/anonymous**.
 
 ---
 
 # Business Problem
 
-Booking cancellations are a major challenge in the hospitality industry.
-
-When a customer cancels a reservation, hotels may experience:
-
-* Lost room revenue
-* Lower occupancy rates
-* Inefficient room allocation
-* Inaccurate demand forecasting
-* Staffing inefficiencies
-* Last-minute discounting
-* Reduced operational profitability
-
-Hotels therefore benefit from identifying **high-risk reservations before the cancellation occurs**.
-
-The objective of Guest Shield is to build a predictive system capable of answering:
+Booking cancellations create uncertainty in occupancy planning, room allocation, staffing, pricing, and expected revenue. A reservation-level cancellation probability can help hotel teams identify bookings that may benefit from additional confirmation or other carefully designed interventions.
 
 > **How likely is a hotel reservation to be cancelled?**
 
-Accurate cancellation predictions can support proactive business decisions such as:
-
-* Targeted confirmation campaigns
-* Deposit requirements
-* Dynamic overbooking strategies
-* Personalized offers
-* Revenue management
-* Improved occupancy planning
+Guest Shield demonstrates how to convert historical reservations into a predictive model and expose that model through a secure API for use by downstream systems.
 
 ---
 
 # Key Features
 
- Exploratory Data Analysis
-
- Data Cleaning & Validation
-
- Feature Engineering
-
- Customer Booking Behaviour Analysis
-
- Reservation Pattern Analysis
-
- Customer Segmentation
-
- Classification Modeling
-
- Logistic Regression
-
- Support Vector Machine
-
- Random Forest
-
- XGBoost
-
- Class Imbalance Handling
-
- Model Comparison
-
- Confusion Matrix Analysis
-
- Precision / Recall / F1 Evaluation
-
- Cancellation Risk Prediction
-
- Business-Oriented Model Evaluation
+- **Exploratory analysis and research:** EDA and comparisons of Logistic Regression, SVM, Random Forest, and XGBoost.
+- **Reproducible training:** A Python script loads the dataset, engineers features, trains models, evaluates predictions, and exports an inference bundle.
+- **Customer segmentation:** KMeans assigns each processed reservation to one of two clusters.
+- **Cluster-specific classification:** A dedicated Random Forest model predicts the outcome within each cluster.
+- **Class imbalance handling:** SMOTE is applied to the training split only.
+- **Risk output:** Predicted class, cancellation probability, percentage risk, cluster ID, and model version.
+- **Containerized inference:** A Docker image packages the API handler, runtime dependencies, and trained model.
+- **Serverless AWS deployment:** AWS SAM provisions Lambda and an HTTP API on API Gateway.
+- **IAM-secured endpoint:** Requests require AWS Signature Version 4 signing; anonymous requests are rejected.
+- **Observability:** Lambda execution logs and runtime metrics are available through Amazon CloudWatch.
 
 ---
 
 # Solution Architecture
 
-```text
-                 Hotel Reservations Dataset
-                            │
-                            ▼
-                    Data Validation
-                            │
-                    Missing / Duplicate
-                         Checks
-                            │
-                            ▼
-                 Exploratory Data Analysis
-                            │
-                            ▼
-                   Feature Engineering
-                            │
-              ┌─────────────┼─────────────┐
-              ▼             ▼             ▼
-        Numerical       Categorical     Booking
-         Features        Features       Behaviour
-              │             │             │
-              └─────────────┼─────────────┘
-                            ▼
-                    Data Preprocessing
-                            │
-                            ▼
-                 Customer Segmentation
-                            │
-                            ▼
-                Classification Modeling
-                            │
-          ┌─────────────────┼──────────────────┐
-          ▼                 ▼                  ▼
-      Logistic            SVM            Random Forest
-      Regression                                │
-                                                ▼
-                                             XGBoost
-                                                │
-                                                ▼
-                                      Model Evaluation
-                                                │
-                                  Precision • Recall • F1
-                                      Accuracy • ROC-AUC
-                                                │
-                                                ▼
-                                   Cancellation Prediction
-                                                │
-                                                ▼
-                                     Business Intervention
-```
-
----
-
-# Dataset
-
-The project uses the:
+## Machine Learning Training
 
 ```text
-Hotel Reservations.csv
+Historical Hotel Reservations (CSV)
+                │
+                ▼
+       Cleaning & Date Features
+                │
+                ▼
+      Stratified 80/20 Split
+                │
+                ▼
+  Encoder fitted on Training Data
+                │
+                ▼
+        SMOTE (Train Only)
+                │
+                ▼
+       KMeans (2 Clusters)
+                │
+          ┌─────┴─────┐
+          ▼           ▼
+    Random Forest  Random Forest
+      Cluster 0      Cluster 1
+          └─────┬─────┘
+                ▼
+      Held-out Test Evaluation
+                │
+                ▼
+  guest_shield_model.joblib
+ (Preprocessor + KMeans + RFs
+        + Label Encoder)
 ```
 
-dataset containing historical hotel booking information.
-
-The repository stores the dataset under:
+## Deployed AWS Architecture
 
 ```text
-data/Hotel Reservations.csv
+    Authorized Client / Python Test
+                 │
+       POST /prod/predict
+        AWS SigV4 Signed
+                 │
+                 ▼
+      Amazon API Gateway
+        HTTP API (AWS_IAM)
+                 │
+                 ▼
+            AWS Lambda
+     Python 3.13 Container Image
+                 │
+                 ▼
+       Guest Shield Handler
+                 │
+                 ▼
+      Feature Preprocessing
+                 │
+                 ▼
+           KMeans Routing
+                 │
+          ┌──────┴──────┐
+          ▼             ▼
+     Random Forest  Random Forest
+       Cluster 0      Cluster 1
+          └──────┬──────┘
+                 ▼
+        JSON Risk Prediction
+
+ Supporting AWS Services:
+ ─ Amazon ECR: Lambda container image
+ ─ AWS IAM: execution roles and API authorization
+ ─ Amazon CloudWatch: logs and execution metrics
+ ─ AWS SAM / CloudFormation: infrastructure as code
 ```
 
-Reservation data contains variables describing customer, room, booking, and reservation behaviour.
-
-Typical predictors used in hotel cancellation modeling include information such as:
-
-* Number of adults
-* Number of children
-* Weekend nights
-* Week nights
-* Meal plan
-* Required car parking space
-* Room type
-* Lead time
-* Arrival year
-* Arrival month
-* Arrival date
-* Market segment
-* Repeated guest status
-* Previous cancellations
-* Previous successful bookings
-* Average room price
-* Special requests
-* Booking status
-
-The target represents whether the reservation was:
-
-```text
-Canceled
-or
-Not Canceled
-```
+**Deployment region:** `ap-southeast-1` (Singapore). The API URL is generated as a CloudFormation stack output after deployment rather than hardcoded in this repository.
 
 ---
 
-# Exploratory Data Analysis
+# Dataset and Research
 
-The EDA stage investigates both customer behaviour and booking characteristics associated with hotel cancellations.
+The original dataset is stored at [`data/Hotel Reservations.csv`](data/Hotel%20Reservations.csv). Features include booking lead time, room price, stay duration, customer composition, meal plan, room type, market segment, past cancellations, and special requests.
 
-The analysis explores areas such as:
+The original research evaluates several modeling approaches:
 
-* Booking cancellation distribution
-* Customer composition
-* Lead time
-* Room prices
-* Market segments
-* Number of special requests
-* Arrival patterns
-* Repeated customers
-* Previous cancellation behaviour
-* Stay duration
-* Room types
+| Method | Role in the project |
+| --- | --- |
+| Logistic Regression | Interpretable classification baseline |
+| Support Vector Machine | Alternative classification experiments |
+| Random Forest | Nonlinear classification and deployed cluster-specific models |
+| XGBoost | Boosted-tree comparison in research notebooks |
+| KMeans | Segmentation and routing in the deployed inference workflow |
 
-The EDA notebook is located at:
-
-```text
-notebooks/EDA.ipynb
-```
-
-Understanding these patterns is important because different reservation characteristics may influence cancellation probability.
+The research report contains the detailed comparative findings: **[`Guest Shield_Report.pdf`](Guest%20Shield_Report.pdf)**.
 
 ---
 
-# Data Preprocessing
-
-Before model training, reservation data is prepared for machine learning.
-
-Typical preprocessing tasks include:
-
-```text
-Raw Reservation Data
-        ↓
-Data Quality Checks
-        ↓
-Categorical Encoding
-        ↓
-Numerical Feature Preparation
-        ↓
-Train/Test Split
-        ↓
-Class Imbalance Handling
-        ↓
-Model Training
-```
-
-The resulting dataset becomes suitable for supervised classification algorithms.
-
----
-
-# Customer Segmentation
-
-One of the more advanced components of Guest Shield is the analysis of heterogeneous booking behaviour.
-
-Rather than assuming all hotel customers behave identically, customer reservations can be grouped according to booking characteristics.
-
-Segmentation helps reveal groups with different:
-
-* Cancellation behaviour
-* Booking lead times
-* Price sensitivity
-* Reservation characteristics
-* Customer behaviour
-
-This allows predictive models to better capture differences between customer groups.
-
----
-
-# Class Imbalance
-
-Hotel cancellation datasets may contain unequal numbers of cancelled and non-cancelled reservations.
-
-This means **accuracy alone may not provide a complete evaluation of model quality**.
-
-For example, a model could achieve high accuracy while failing to identify many actual cancellations.
-
-Guest Shield therefore considers classification metrics such as:
-
-| Metric        | Meaning                                       |
-| ------------- | --------------------------------------------- |
-| **Precision** | How many predicted cancellations were correct |
-| **Recall**    | How many actual cancellations were detected   |
-| **F1-score**  | Balance between Precision and Recall          |
-| **Accuracy**  | Overall classification correctness            |
-| **ROC-AUC**   | Overall discrimination ability                |
-
-From a hotel business perspective, **Recall can be particularly important** because missing a high-risk booking could result in lost revenue.
-
----
-
-# Machine Learning Models
-
-Multiple classification models are explored and compared.
-
----
-
-## Logistic Regression
-
-Logistic Regression provides an interpretable baseline model for estimating cancellation probability.
-
-The repository includes multiple Logistic Regression experiments:
-
-```text
-notebooks/Binary_Logistic.ipynb
-notebooks/Logistic_0.ipynb
-notebooks/Logistic_1.ipynb
-```
-
-Logistic Regression is useful because the resulting probability can be interpreted as a reservation's cancellation risk.
-
----
-
-# Support Vector Machine
-
-Support Vector Machines are evaluated as an alternative classification approach.
-
-The repository contains:
-
-```text
-notebooks/SupportVector_0.ipynb
-notebooks/SupportVector_1.ipynb
-```
-
-SVM attempts to construct an optimal decision boundary separating:
-
-```text
-Cancelled Reservations
-        from
-Non-Cancelled Reservations
-```
-
-SVM models can capture more complex decision boundaries than standard linear models.
-
----
-
-# Random Forest
-
-Random Forest is used to capture nonlinear relationships and interactions within customer booking behaviour.
-
-Random Forest combines multiple decision trees to create a robust ensemble prediction.
-
-It can identify complex relationships involving factors such as:
-
-* Lead time
-* Average room price
-* Market segment
-* Special requests
-* Previous cancellations
-* Stay length
-* Customer characteristics
-
-The implementation is contained in:
-
-```text
-notebooks/RandomForest and XGboost.ipynb
-```
-
----
-
-# XGBoost
-
-XGBoost is evaluated as a gradient boosting approach for hotel cancellation classification.
-
-Rather than training independent trees, XGBoost builds trees sequentially, where each new tree attempts to correct errors produced by earlier trees.
-
-This allows XGBoost to capture complex nonlinear relationships between booking characteristics and cancellation behaviour.
-
-The XGBoost experiments are located in:
-
-```text
-notebooks/RandomForest and XGboost.ipynb
-```
-
----
-
-# Model Evaluation
-
-The machine learning models are evaluated using classification metrics and confusion matrices.
-
-A confusion matrix separates predictions into:
-
-```text
-                    Predicted
-                 Stay     Cancel
-Actual Stay       TN         FP
-Actual Cancel     FN         TP
-```
-
-Where:
-
-* **TP** — correctly predicted cancellations
-* **TN** — correctly predicted completed bookings
-* **FP** — bookings incorrectly predicted to cancel
-* **FN** — actual cancellations that were missed
-
-For hotel operations, False Negatives can be particularly costly because they represent customers who cancel despite being predicted to complete their booking.
-
----
-
-# Model Comparison
-
-The project compares several families of classification algorithms:
-
-| Model                  | Main Strength                                    |
-| ---------------------- | ------------------------------------------------ |
-| Logistic Regression    | Interpretability                                 |
-| Support Vector Machine | Flexible decision boundaries                     |
-| Random Forest          | Nonlinear relationships and feature interactions |
-| XGBoost                | High-performance boosted classification          |
-
-The objective is not simply to identify the model with the highest accuracy.
-
-The preferred model should provide a suitable balance between:
-
-```text
-Recall
-Precision
-F1-score
-Accuracy
-ROC-AUC
-```
-
-depending on the hotel's business objective.
-
----
-
-# Business Interpretation
-
-A predictive cancellation model becomes most valuable when predictions lead to business actions.
-
-For example:
-
-```text
-Reservation
-     ↓
-Cancellation Model
-     ↓
-Predicted Risk
-     ↓
-┌──────────┬─────────────┬───────────┐
-▼          ▼             ▼
-Low       Medium         High
-Risk       Risk          Risk
-│           │              │
-▼           ▼              ▼
-Normal    Reminder      Deposit /
-Process   Campaign      Confirmation
-```
-
-This transforms a machine learning prediction into an operational decision-support system.
-
----
-
-# Example Business Use Cases
-
-## High-Risk Booking Identification
-
-Identify reservations with high cancellation probabilities and prioritize them for additional confirmation.
-
----
-
-## Revenue Management
-
-Use predicted cancellation risk when planning expected room occupancy and revenue.
-
----
-
-## Overbooking Strategy
-
-Predicted cancellation probabilities can support controlled overbooking decisions.
-
----
-
-## Customer Communication
-
-High-risk bookings could receive:
-
-* Confirmation emails
-* Reminder notifications
-* Personalized offers
-* Flexible rescheduling options
-
----
-
-## Deposit Policies
-
-Hotels could introduce different deposit policies based on predicted booking risk.
-
----
-
-## Marketing Optimization
-
-Customer booking behaviour can be used to identify segments that require different retention or promotional strategies.
-
----
-
-# End-to-End Workflow
-
-```text
-Hotel Reservation Dataset
-        ↓
-Data Inspection
-        ↓
-Exploratory Data Analysis
-        ↓
-Data Cleaning
-        ↓
-Feature Engineering
-        ↓
-Categorical Encoding
-        ↓
-Customer Segmentation
-        ↓
-Train / Test Split
-        ↓
-Class Imbalance Handling
-        ↓
-Model Development
-        ↓
-┌─────────────────────────────┐
-│ Logistic Regression         │
-│ Support Vector Machine      │
-│ Random Forest               │
-│ XGBoost                     │
-└─────────────────────────────┘
-        ↓
-Model Evaluation
-        ↓
-Precision
-Recall
-F1-score
-Accuracy
-ROC-AUC
-        ↓
-Model Comparison
-        ↓
-Cancellation Risk Prediction
-        ↓
-Hotel Business Decisions
-```
+# Data Preprocessing and Model Training
+
+The training script [`scripts/export_model.py`](scripts/export_model.py) performs these operations:
+
+1. Load reservation data and remove the booking identifier.
+2. Correct invalid February 29, 2018 dates and derive arrival-day features.
+3. Split observations into **80% training / 20% testing**, stratified by booking outcome.
+4. Fit a `ColumnTransformer` with one-hot encoding on training data and transform the test split using the same encoder.
+5. Encode the target and apply **SMOTE only to training data**.
+6. Fit **KMeans with two clusters** to the resampled training features.
+7. Train one **Random Forest** per cluster.
+8. Route held-out test reservations to the appropriate classifier and evaluate predictions.
+9. Save the full inference bundle to `models/guest_shield_model.joblib`.
+
+The deployed training run achieved **89.91% held-out test accuracy**. This is a test-set result from the implemented pipeline, not a guarantee of future performance on live hotel reservations. Precision, recall, class-specific errors, and probability calibration also matter for operational decisions.
+
+> **Modeling note:** The current training script applies standard SMOTE after one-hot encoding. Future experimentation should evaluate categorical-aware resampling (such as SMOTENC) and probability calibration.
 
 ---
 
 # 🛠 Technology Stack
 
-| Layer                   | Technologies                                     |
-| ----------------------- | ------------------------------------------------ |
-| Programming             | Python                                           |
-| Data Manipulation       | Pandas, NumPy                                    |
-| Data Analysis           | Python, Jupyter Notebook                         |
-| Visualization           | Matplotlib, Seaborn                              |
-| Machine Learning        | Scikit-learn                                     |
-| Classification          | Logistic Regression, SVM                         |
-| Ensemble Learning       | Random Forest                                    |
-| Gradient Boosting       | XGBoost                                          |
-| Model Evaluation        | Confusion Matrix, Precision, Recall, F1, ROC-AUC |
-| Development Environment | Jupyter Notebook                                 |
-| Version Control         | Git & GitHub                                     |
+| Layer | Technologies |
+| --- | --- |
+| Programming | Python 3.13 |
+| Data preparation | Pandas, NumPy |
+| Machine learning | Scikit-learn, imbalanced-learn |
+| Research experiments | Jupyter Notebooks, Logistic Regression, SVM, Random Forest, XGBoost |
+| Model serialization | Joblib |
+| API runtime | AWS Lambda Python container |
+| Containerization | Docker |
+| API management | Amazon API Gateway HTTP API |
+| Container registry | Amazon Elastic Container Registry (ECR) |
+| Infrastructure as code | AWS SAM, AWS CloudFormation |
+| Security | AWS IAM authorization, SigV4 signed requests |
+| Monitoring | Amazon CloudWatch |
+| Development tools | Git, GitHub, AWS CLI, SAM CLI, PowerShell |
 
 ---
 
@@ -601,244 +194,266 @@ Hotel Business Decisions
 ```text
 hotel-cancellation-prediction/
 │
+├── app/
+│   └── handler.py                 # Lambda prediction handler
 ├── data/
-│   └── Hotel Reservations.csv
+│   └── Hotel Reservations.csv    # Training dataset
+├── models/
+│   └── guest_shield_model.joblib # Generated locally; ignored by Git
+├── notebooks/                    # Original research experiments
+├── scripts/
+│   └── export_model.py           # Train, evaluate, and export model
+├── tests/
+│   ├── test_local.py             # Local inference tests
+│   └── test_aws_api.py           # Signed deployed-API test
 │
-├── notebooks/
-│   ├── EDA.ipynb
-│   ├── Binary_Logistic.ipynb
-│   ├── Logistic_0.ipynb
-│   ├── Logistic_1.ipynb
-│   ├── SupportVector_0.ipynb
-│   ├── SupportVector_1.ipynb
-│   └── RandomForest and XGboost.ipynb
-│
-├── Guest Shield_Report.pdf
-│
+├── Dockerfile                    # Lambda container build
+├── template.yaml                 # AWS SAM infrastructure
+├── requirements.txt             # Inference dependencies
+├── requirements-training.txt    # Training dependencies
+├── .dockerignore
+├── .gitignore
+├── Guest Shield_Report.pdf       # Detailed research report
 └── README.md
 ```
 
----
-
-# Project Files
-
-## Exploratory Data Analysis
-
-```text
-notebooks/EDA.ipynb
-```
-
-Contains exploratory analysis and visualization of hotel reservation behaviour.
+`samconfig.toml`, `.venv/`, `.aws-sam/`, `.env`, and generated model binaries are excluded from version control. The trained `.joblib` bundle is not published as a Git-tracked file; **train it locally before building or deploying the container**.
 
 ---
 
-## Logistic Regression
+# 🚀 Getting Started (Windows / PowerShell)
 
-```text
-notebooks/Binary_Logistic.ipynb
-notebooks/Logistic_0.ipynb
-notebooks/Logistic_1.ipynb
+## Prerequisites
+
+- Python **3.13** and `pip`
+- Git
+- Docker Desktop (running for container builds)
+- AWS CLI and AWS SAM CLI (for AWS deployment)
+- An AWS account and appropriately scoped permissions (for deployment and API invocation)
+
+## 1. Clone the Repository
+
+```powershell
+git clone https://github.com/supulwickramasinghe/hotel-cancellation-prediction.git
+cd hotel-cancellation-prediction
 ```
 
-Contains Logistic Regression experiments for hotel cancellation classification.
+## 2. Set Up the Python Environment
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+```
+
+## 3. Train and Export the Model
+
+```powershell
+python -m pip install -r requirements-training.txt
+python scripts/export_model.py
+```
+
+This creates `models/guest_shield_model.joblib`, containing the trained preprocessing, clustering, classification, and label-encoding objects. The script prints evaluation results and overwrites an existing local model bundle.
+
+## 4. Install Inference Dependencies and Test Locally
+
+```powershell
+python -m pip install -r requirements.txt
+python tests/test_local.py
+```
+
+The local test should confirm that the handler can load the model and produce a prediction. Check the script output for its specific assertions/results.
 
 ---
 
-## Support Vector Machine
+# 🐳 Docker and Local Container Build
 
-```text
-notebooks/SupportVector_0.ipynb
-notebooks/SupportVector_1.ipynb
+The Lambda container image is defined in [`Dockerfile`](Dockerfile). It uses the AWS Lambda Python 3.13 base image and includes the model bundle generated in the previous section.
+
+```powershell
+docker build -t guest-shield-api:local .
 ```
 
-Contains SVM-based hotel cancellation classification experiments.
+The `.dockerignore` file excludes notebooks, research data, training scripts, virtual environments, and other files that aren't needed inside the production inference container.
+
+For a local runtime test, use `tests/test_local.py`. Docker Desktop must be running for image builds and SAM container-based builds.
 
 ---
 
-## Random Forest & XGBoost
+# ☁️ Deploy to AWS with SAM
 
-```text
-notebooks/RandomForest and XGboost.ipynb
+The AWS resources are declared in [`template.yaml`](template.yaml): an API Gateway **HTTP API**, a **container-image Lambda function**, the associated API integration and permissions, and stack outputs. The API's OpenAPI security definition enforces **AWS_IAM** authentication on `POST /predict`.
+
+## 1. Configure AWS Credentials
+
+Configure an AWS CLI profile using your preferred supported authentication method, and confirm the intended account and region:
+
+```powershell
+aws sts get-caller-identity --profile guest-shield
 ```
 
-Contains ensemble and boosted tree models used to predict reservation cancellations.
+`guest-shield` is the profile name used in the example commands; substitute your own profile if different. **Never commit AWS credentials, tokens, or `.env` files.**
+
+## 2. Validate and Build
+
+```powershell
+sam validate --template-file template.yaml --profile guest-shield --region ap-southeast-1
+sam build --profile guest-shield --region ap-southeast-1
+```
+
+The build requires the generated model file and a working Docker installation.
+
+## 3. Deploy
+
+On a fresh machine or AWS account, run the guided deployment:
+
+```powershell
+sam deploy --guided --profile guest-shield --region ap-southeast-1
+```
+
+Review the prompts, CloudFormation changeset, IAM capabilities, and estimated resource implications before confirming. SAM can build/push the container image to an ECR repository managed or configured for the deployment. The generated local `samconfig.toml` is excluded from Git.
+
+For subsequent deployments, after reviewing changes:
+
+```powershell
+sam deploy --profile guest-shield --region ap-southeast-1 --confirm-changeset
+```
+
+**Deployed stage:** `prod`
+**Route:** `POST /predict`
+**Full URL shape:** `https://<api-id>.execute-api.ap-southeast-1.amazonaws.com/prod/predict`
+
+Get the deployed URL from the CloudFormation outputs:
+
+```powershell
+aws cloudformation describe-stacks `
+  --stack-name guest-shield-api `
+  --profile guest-shield `
+  --region ap-southeast-1 `
+  --query "Stacks[0].Outputs" `
+  --output table `
+  --no-cli-pager
+```
 
 ---
 
-## Project Report
+# 🔐 API Security and Testing
 
-```text
-Guest Shield_Report.pdf
+The deployed endpoint **does not permit anonymous prediction requests**. API Gateway requires **AWS Signature Version 4**, using credentials belonging to a principal that is explicitly allowed to invoke the API.
+
+| Test | Verified result |
+| --- | --- |
+| Unsigned POST request | **403 Forbidden** |
+| Properly signed POST request | **200 OK** |
+| SAM redeployment | IAM authorization preserved |
+
+IAM authentication on a route does not automatically authorize every AWS identity. The caller also requires the appropriate `execute-api:Invoke` permission. Use least-privilege access and avoid embedding long-lived credentials in application code.
+
+## Signed AWS API Test
+
+Once your AWS profile can authenticate and has invoke permissions, run:
+
+```powershell
+python tests/test_aws_api.py
 ```
 
-Contains the detailed project methodology, analysis, modeling results, and business interpretation.
+The test uses AWS credentials from the configured profile to sign the request and verify the deployed API response. If your local deployment has a different API URL, update the test configuration accordingly.
+
+## Example Prediction Response
+
+```json
+{
+  "prediction": "Not_Canceled",
+  "cancellation_probability": 0.2943,
+  "cancellation_risk_percent": 29.43,
+  "cluster_id": 0,
+  "model_version": "1.0.0"
+}
+```
+
+This sample illustrates a reservation predicted **not to cancel**, with an estimated **29.43% cancellation probability**. Probabilities are model estimates; they should not be treated as calibrated financial-risk scores without further validation.
 
 ---
 
-# Prediction Concept
+# 📊 Monitoring, Performance, and Costs
 
-For a new reservation, the system can use booking characteristics such as:
+**Amazon CloudWatch** provides Lambda logs, errors, duration, and memory-use information. API Gateway and Lambda usage can also be reviewed through AWS service metrics and billing tools.
 
-```text
-Lead Time
-Number of Adults
-Number of Children
-Stay Duration
-Room Type
-Meal Plan
-Market Segment
-Average Room Price
-Special Requests
-Repeated Guest Status
-Previous Cancellations
-```
+During initial testing, cold-start initialization was notably slower than warm execution because the runtime loads the ML dependencies and serialized models. The deployed configuration uses:
 
-These features are transformed and passed into the trained classification model.
+| Setting | Value |
+| --- | --- |
+| Lambda memory | **1,024 MB** |
+| Lambda timeout | **30 seconds** |
+| Reserved concurrency | Not explicitly configured |
+| AWS region | `ap-southeast-1` |
 
-```text
-New Hotel Reservation
-        ↓
-Feature Preparation
-        ↓
-Machine Learning Model
-        ↓
-Cancellation Probability
-        ↓
-Risk Classification
-        ↓
-Hotel Intervention
-```
+The original deployment was tested with successful inference responses and AWS IAM authorization. Actual latency and charges depend on traffic, runtime conditions, and AWS pricing.
+
+A budget alert can provide early warning, but **AWS Budgets alerts do not automatically stop spending**. Monitor Lambda, API Gateway, ECR image storage, CloudWatch logs, and any deployment artifacts regularly.
 
 ---
 
-# Why Cancellation Prediction Matters
+# 🧹 Remove AWS Resources
 
-Traditional hotel systems record cancellations only **after they happen**.
+When you are finished experimenting, you can remove the CloudFormation stack:
 
-Machine learning enables hotels to move from:
-
-```text
-Reactive Analytics
+```powershell
+sam delete --stack-name guest-shield-api --profile guest-shield --region ap-southeast-1
 ```
 
-to:
+**Destructive action:** This removes deployed stack resources. Review the deletion prompts carefully; any separately created ECR repositories, retained artifacts, logs, or other AWS resources may require additional cleanup. Verify the Billing console afterward.
 
-```text
-Predictive Analytics
-```
+---
 
-Instead of asking:
+# Business Interpretation
 
-> "How many bookings were cancelled last month?"
+Guest Shield supplies a probability estimate that could support:
 
-the hotel can ask:
+- Reservation confirmation campaigns for bookings identified as higher risk.
+- Occupancy and revenue forecasting informed by cancellation likelihood.
+- Review of cancellation patterns across booking segments.
+- Further assessment of booking policies and customer communication strategies.
 
-> "Which current reservations are most likely to cancel?"
-
-This allows hotels to act before revenue is lost.
+The current API is a **machine learning demonstration**, not a fully integrated hotel reservation system. Any business intervention should be tested for accuracy, fairness, customer experience, and financial impact before operational use.
 
 ---
 
 # Future Improvements
 
-Potential improvements include:
+The following are **future enhancements**, not features of the current AWS deployment:
 
-* Hyperparameter optimization
-* CatBoost classification
-* SHAP explainability
-* Feature importance dashboards
-* Probability calibration
-* Cost-sensitive learning
-* Automated class imbalance handling
-* MLflow experiment tracking
-* Flask prediction API
-* Interactive web application
-* Docker containerization
-* AWS deployment
-* API Gateway integration
-* AWS Lambda inference
-* Amazon ECR
-* Amazon S3 model storage
-* CloudWatch monitoring
-* CI/CD with GitHub Actions
-* Automated model retraining
-* Model drift monitoring
-* REST API deployment
-* Real-time cancellation scoring
-
----
-
-# ☁️ Potential Cloud Architecture
-
-A production-oriented extension of Guest Shield could use a cloud architecture such as:
-
-```text
-Hotel Reservation System
-          │
-          ▼
-      REST API
-          │
-          ▼
-     API Gateway
-          │
-          ▼
-     AWS Lambda
-          │
-          ▼
-Cancellation Prediction Model
-          │
-          ▼
-     Prediction Result
-          │
-          ▼
-Hotel Reservation / Revenue System
-```
-
-Supporting components could include:
-
-```text
-Amazon S3
-Amazon ECR
-AWS Lambda
-API Gateway
-CloudWatch
-IAM
-GitHub Actions
-```
-
-This would transform the notebook-based machine learning project into a deployable prediction service.
+- Probability calibration, feature attribution (e.g., SHAP), and threshold optimization.
+- Evaluate categorical-aware resampling and compare alternative modeling strategies.
+- CI/CD with GitHub Actions and automated test gates.
+- Automated retraining, model registry/versioning, and drift monitoring.
+- API request validation enhancements, throttling, and additional operational controls.
+- Interactive booking-risk dashboard or hotel-system integration.
 
 ---
 
 # 🎓 Project Context
 
-Guest Shield demonstrates the application of:
-
-* Exploratory data analysis
-* Data preprocessing
-* Customer behaviour analysis
-* Classification modeling
-* Class imbalance handling
-* Machine learning evaluation
-* Predictive analytics
-* Business decision support
-
-to a real-world hospitality problem.
-
-The project demonstrates the transition from:
+Guest Shield combines **predictive analytics research** with a practical **ML deployment workflow**:
 
 ```text
 Business Problem
       ↓
-Historical Data
+Historical Reservation Data
       ↓
-Exploratory Analysis
+Research & Feature Engineering
       ↓
-Machine Learning
+Trained / Evaluated Model
       ↓
-Risk Prediction
+Docker Container
       ↓
-Business Action
+AWS Lambda + API Gateway
+      ↓
+IAM-Secured Prediction API
+      ↓
+Potential Hotel Decision Support
 ```
+
+For the comprehensive methodology, model comparisons, and original research results, see **[`Guest Shield_Report.pdf`](Guest%20Shield_Report.pdf)**.
 
 ---
