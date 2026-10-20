@@ -53,6 +53,21 @@ Guest Shield demonstrates how to convert historical reservations into a predicti
 
 # Solution Architecture
 
+The two diagrams below distinguish **offline model training** from the **live AWS inference request**. The architecture files are available as PNG images and editable SVGs in [`docs/architecture/`](docs/architecture/).
+
+### ML training and model export
+
+![Guest Shield machine learning training pipeline](docs/architecture/ml-pipeline.png)
+
+The training script creates a model bundle containing the fitted preprocessor, KMeans model, two cluster-specific Random Forest classifiers, and label encoder. SMOTE is applied **only to the training split**. The reported **89.91% accuracy** is measured on held-out test reservations.
+
+### AWS deployment and inference
+
+![Guest Shield AWS serverless inference architecture](docs/architecture/aws-serverless-architecture.png)
+
+An IAM-authorized client signs a `POST /prod/predict` request using AWS SigV4. API Gateway invokes the Lambda function, which runs a container image supplied through Amazon ECR and loads the packaged model for inference. **ECR is not queried on every prediction.** AWS SAM/CloudFormation manages the infrastructure, and CloudWatch records Lambda operational metrics.
+
+
 ## Machine Learning Training
 
 ```text
@@ -207,6 +222,10 @@ hotel-cancellation-prediction/
 │   ├── test_local.py             # Local inference tests
 │   └── test_aws_api.py           # Signed deployed-API test
 │
+├── docs/
+│   ├── architecture/             # PNG and SVG architecture diagrams
+│   └── screenshots/              # AWS Console and API test evidence
+│
 ├── Dockerfile                    # Lambda container build
 ├── template.yaml                 # AWS SAM infrastructure
 ├── requirements.txt             # Inference dependencies
@@ -221,7 +240,7 @@ hotel-cancellation-prediction/
 
 ---
 
-# 🚀 Getting Started (Windows / PowerShell)
+# Getting Started (Windows / PowerShell)
 
 ## Prerequisites
 
@@ -266,7 +285,7 @@ The local test should confirm that the handler can load the model and produce a 
 
 ---
 
-# 🐳 Docker and Local Container Build
+# Docker and Local Container Build
 
 The Lambda container image is defined in [`Dockerfile`](Dockerfile). It uses the AWS Lambda Python 3.13 base image and includes the model bundle generated in the previous section.
 
@@ -280,7 +299,7 @@ For a local runtime test, use `tests/test_local.py`. Docker Desktop must be runn
 
 ---
 
-# ☁️ Deploy to AWS with SAM
+# Deploy to AWS with SAM
 
 The AWS resources are declared in [`template.yaml`](template.yaml): an API Gateway **HTTP API**, a **container-image Lambda function**, the associated API integration and permissions, and stack outputs. The API's OpenAPI security definition enforces **AWS_IAM** authentication on `POST /predict`.
 
@@ -375,7 +394,49 @@ This sample illustrates a reservation predicted **not to cancel**, with an estim
 
 ---
 
-# 📊 Monitoring, Performance, and Costs
+# 📸 Deployment Evidence — AWS Console and API Tests
+
+The screenshots below were captured from the deployed **Guest Shield** environment in **AWS ap-southeast-1**. They document a development/test deployment rather than production-scale operations. Account-specific identifiers have been obscured where applicable.
+
+## 1. Lambda function and API Gateway trigger
+
+![AWS Lambda function overview and configuration](docs/screenshots/lambda-overview.png)
+
+*Lambda function overview with API Gateway trigger, 1,024 MB memory, and a 30-second timeout.*
+
+## 2. API Gateway IAM authorization
+
+![API Gateway route showing IAM authorization](docs/screenshots/api-gateway-iam.png)
+
+*The `POST /predict` route uses built-in IAM authorization. Unsigned requests were rejected with HTTP 403; correctly signed requests succeeded.*
+
+## 3. Amazon ECR container image
+
+![ECR image repository](docs/screenshots/ecr-container.png)
+
+*The private ECR repository contains the deployed Lambda container image (313.57 MB at capture time).*
+
+## 4. CloudFormation stack resources
+
+![CloudFormation Guest Shield stack resources](docs/screenshots/cloudformation-stack.png)
+
+*The AWS SAM-managed CloudFormation stack includes the API, `prod` stage, Lambda function, execution role, and invocation permission.*
+
+## 5. CloudWatch Lambda monitoring
+
+![Lambda monitoring metrics](docs/screenshots/cloudwatch-monitoring.png)
+
+*Selected one-week test period: 11 invocations, no reported Lambda errors or throttles, and a maximum execution duration of approximately 22.9 seconds. These are small-scale test metrics, not a production benchmark.*
+
+## 6. Successful authenticated prediction
+
+![Successful AWS API prediction response](docs/screenshots/prediction-response.png)
+
+*Signed request returned HTTP 200, `Not_Canceled`, and a cancellation risk of 29.43% for the sample reservation.*
+
+---
+
+# Monitoring, Performance, and Costs
 
 **Amazon CloudWatch** provides Lambda logs, errors, duration, and memory-use information. API Gateway and Lambda usage can also be reviewed through AWS service metrics and billing tools.
 
@@ -394,7 +455,7 @@ A budget alert can provide early warning, but **AWS Budgets alerts do not automa
 
 ---
 
-# 🧹 Remove AWS Resources
+# Remove AWS Resources
 
 When you are finished experimenting, you can remove the CloudFormation stack:
 
